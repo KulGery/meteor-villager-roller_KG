@@ -699,6 +699,10 @@ public class VillagerRoller extends Module {
 
     public void triggerTradeCheck(TradeOfferList l) {
         for (TradeOffer offer : l) {
+            ItemStack firstBuy = offer.getOriginalFirstBuyItem();
+            if (firstBuy.isOf(Items.PAPER)) {
+                info(String.format("Found Paper on second Trade"))
+            }
             ItemStack sellItem = offer.getSellItem();
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
                 continue;
