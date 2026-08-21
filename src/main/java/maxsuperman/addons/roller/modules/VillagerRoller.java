@@ -67,6 +67,8 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.village.VillagerProfession;
 import org.apache.commons.io.FilenameUtils;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -828,8 +830,8 @@ public class VillagerRoller extends Module {
                     toggle();
                 }
             }
-            case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR -> {
-                if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
+            /* case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR -> {
+                if (mc.level.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
                     if (cfDiscrepancy.get()) {
                         info("Rolling block mining reverted?");
                     }
@@ -843,6 +845,7 @@ public class VillagerRoller extends Module {
                     }
                 });
             }
+            */
             case ROLLING_PLACING_BLOCK -> {
                 if (mc.world.getBlockState(rollingBlockPos).is(Blocks.LECTERN)) {
                     if (cfBlockPlaceBounce.get()) {
