@@ -721,13 +721,13 @@ public class VillagerRoller extends Module {
             info(sTrade);
             if (firstBuy.isOf(Items.PAPER) && !isPaper) {
                 isPaper=True;
-                If (PaperTrade==null) {PaperTrade=offer;}
+                if (PaperTrade==null) {PaperTrade=offer;}
                 //info(String.format("Found Paper on second Trade"));
             }
             
             if (sellItem.isOf(Items.ENCHANTED_BOOK) && !(sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)){
                 isEnch=True;
-                If (EnchTrade==null) {EnchTrade=offer;}
+                if (EnchTrade==null) {EnchTrade=offer;}
             }
 
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
@@ -803,8 +803,8 @@ public class VillagerRoller extends Module {
             }
         }
         String Signals="There are";
-        If (isPaper) {Signals=Signals+" Paper";}
-        If (isEnch) {Signals=Signals+" Enchantment";}
+        if (isPaper) {Signals=Signals+" Paper";}
+        if (isEnch) {Signals=Signals+" Enchantment";}
         info(Signals);
 
         mc.player.closeHandledScreen();
