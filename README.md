@@ -4,7 +4,7 @@
 ![checks](https://github.com/maxsupermanhd/meteor-villager-roller/actions/workflows/checks.yml/badge.svg)
 ![devbuild](https://github.com/maxsupermanhd/meteor-villager-roller/actions/workflows/devbuild.yml/badge.svg)
 
-Addon that changes villager profession until the desired trade is found.
+Addon that changes villager profession until the desired trade is found..
 
 We have a [Discord server](https://discord.com/invite/DFsMKWJJPN).
 
