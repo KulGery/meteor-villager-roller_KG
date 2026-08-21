@@ -264,6 +264,19 @@ public class VillagerRoller extends Module {
         .defaultValue(true)
         .build()
     );
+    private final Setting<Boolean> cfBlockPlaceBounce = sgChatFeedback.add(new BoolSetting.Builder()
+        .name("block-place-bounce")
+        .description("Lets you know if placement was momentarily reverted and then placed again.")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> cfFoundMatching = sgChatFeedback.add(new BoolSetting.Builder()
+        .name("found-matching")
+        .description("Lets you know what was found before stopping.")
+        .defaultValue(true)
+        .build()
+    );
 
     private enum State {
         DISABLED,
@@ -722,6 +735,10 @@ public class VillagerRoller extends Module {
                         continue;
                     }
                     if (disableIfFound.get()) e.enabled = false;
+                    if (cfFoundMatching.get()) {
+                        info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
+                            enchantName, enchantLevel, offer.getBaseCostA().getCount()));
+                    }
                     toggle();
                     if (enablePlaySound.get() && !sound.get().isEmpty()) {
                         mc.getSoundManager().play(PositionedSoundInstance.master(sound.get().get(0),
@@ -826,6 +843,13 @@ public class VillagerRoller extends Module {
                 });
             }
             case ROLLING_PLACING_BLOCK -> {
+                if (mc.level.getBlockState(rollingBlockPos).is(Blocks.LECTERN)) {
+                    if (cfBlockPlaceBounce.get()) {
+                        info("Lectern placement bounced?");
+                    }
+                    currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW;
+                    return;
+                }
                 FindItemResult item = InvUtils.findInHotbar(rollingBlock.asItem());
                 if (!item.found()) {
                     placeFailed("Lectern not found in hotbar");
