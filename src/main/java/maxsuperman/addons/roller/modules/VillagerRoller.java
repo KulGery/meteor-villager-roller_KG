@@ -698,8 +698,8 @@ public class VillagerRoller extends Module {
     }
 
     public void triggerTradeCheck(TradeOfferList l) {
-        Boolean isPaper=False;
-        Boolean isEnch=False;
+        Boolean isPaper=false;
+        Boolean isEnch=false;
         TradeOffer PaperTrade=null;
         TradeOffer EnchTrade=null;
         for (TradeOffer offer : l) {
@@ -720,13 +720,13 @@ public class VillagerRoller extends Module {
 
             info(sTrade);
             if (firstBuy.isOf(Items.PAPER) && !isPaper) {
-                isPaper=True;
+                isPaper=true;
                 if (PaperTrade==null) {PaperTrade=offer;}
                 //info(String.format("Found Paper on second Trade"));
             }
             
             if (sellItem.isOf(Items.ENCHANTED_BOOK) && !(sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)){
-                isEnch=True;
+                isEnch=true;
                 if (EnchTrade==null) {EnchTrade=offer;}
             }
 
