@@ -831,13 +831,13 @@ public class VillagerRoller extends Module {
                 }
             }
             case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR -> {
-                /* if (mc.level.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
+                if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
                     if (cfDiscrepancy.get()) {
                         info("Rolling block mining reverted?");
                     }
                     currentState = State.ROLLING_BREAKING_BLOCK;
                     return;
-                }*/
+                }
                 rollingVillager.getVillagerData().profession().getKey().ifPresent(profession -> {
                     if (profession == VillagerProfession.NONE) {
                         // info("Profession cleared");
@@ -846,7 +846,7 @@ public class VillagerRoller extends Module {
                 });
             }            
             case ROLLING_PLACING_BLOCK -> {
-                if (mc.world.getBlockState(rollingBlockPos).is(Blocks.LECTERN)) {
+                if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
                     if (cfBlockPlaceBounce.get()) {
                         info("Lectern placement bounced?");
                     }
