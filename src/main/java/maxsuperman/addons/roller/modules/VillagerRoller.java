@@ -737,7 +737,8 @@ public class VillagerRoller extends Module {
                     if (disableIfFound.get()) e.enabled = false;
                     if (cfFoundMatching.get()) {
                         info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
-                            enchantName, enchantLevel, offer.getBaseCostA().getCount()));
+                            //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
+                            enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
                     }
                     toggle();
                     if (enablePlaySound.get() && !sound.get().isEmpty()) {
@@ -843,7 +844,7 @@ public class VillagerRoller extends Module {
                 });
             }
             case ROLLING_PLACING_BLOCK -> {
-                if (mc.level.getBlockState(rollingBlockPos).is(Blocks.LECTERN)) {
+                if (mc.world.getBlockState(rollingBlockPos).is(Blocks.LECTERN)) {
                     if (cfBlockPlaceBounce.get()) {
                         info("Lectern placement bounced?");
                     }
