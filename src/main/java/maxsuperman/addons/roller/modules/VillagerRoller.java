@@ -698,12 +698,38 @@ public class VillagerRoller extends Module {
     }
 
     public void triggerTradeCheck(TradeOfferList l) {
+        Boolean isPaper=False;
+        Boolean isEnch=False;
+        TradeOffer PaperTrade=null;
+        TradeOffer EnchTrade=null;
         for (TradeOffer offer : l) {
+            // Elsőnel betöltjük mind a három részét a Trade-nek... Persze kérdés, hogy kell-e a másodikat betölteni.. az csak enchantnál van.
+            // Ha az első papír akkor jelöljük és betesszük a PaperTrade-be
+            // Ha a harmadik enchantolt, akkor jelöljük, és betesszük az EnchTrade-be
+            // Illetve ha úgy van beállítva akkor kiírjuk a talált Trade-t (Enchantnál Neve, Szint, Ára)
+            // Ha a trade-ket mi akarjuk tárolni, akkor a sok változós helyett elég a mit mennyiért. kivéve az enchantnál, ott kell a szint is.
             ItemStack firstBuy = offer.getOriginalFirstBuyItem();
-            if (firstBuy.isOf(Items.PAPER)) {
-                info(String.format("Found Paper on second Trade"));
-            }
+            ItemStack secondBuy = offer.getSecondBuyItem();            
             ItemStack sellItem = offer.getSellItem();
+
+            // logoljuk
+            String secondStr = secondBuy.isEmpty() ? "" : secondBuy.getCount() + "x " + secondBuy.getItem().getName().getString() + "  ";
+            String sTrade = firstBuy.getCount() + "x " + firstBuy.getItem().getName().getString() + "  " 
+              + secondStr 
+              + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
+
+            info(sTrade);
+            if (firstBuy.isOf(Items.PAPER)) and !isPaper {
+                isPaper=True;
+                If (PaperTrade==null) Then PaperTrade=offer;
+                //info(String.format("Found Paper on second Trade"));
+            }
+            
+            if (sellItem.isOf(Items.ENCHANTED_BOOK) && !(sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)){
+                isEnch=True;
+                If (EnchTrade==null) Then EnchTrade=offer;
+            }
+
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
                 continue;
 
@@ -776,6 +802,10 @@ public class VillagerRoller extends Module {
                 }
             }
         }
+        String Signals="There are";
+        If isPaper Then Signals=Signals+" Paper";
+        If isEnch Then Signals=Signals+" Enchantment";
+        info(Signals);
 
         mc.player.closeHandledScreen();
         currentState = State.ROLLING_BREAKING_BLOCK;
