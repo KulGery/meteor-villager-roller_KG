@@ -709,7 +709,7 @@ public class VillagerRoller extends Module {
             // Illetve ha úgy van beállítva akkor kiírjuk a talált Trade-t (Enchantnál Neve, Szint, Ára)
             // Ha a trade-ket mi akarjuk tárolni, akkor a sok változós helyett elég a mit mennyiért. kivéve az enchantnál, ott kell a szint is.
             ItemStack firstBuy = offer.getOriginalFirstBuyItem();
-            ItemStack secondBuy = offer.getSecondBuyItem();            
+            ItemStack secondBuy = offer.getDisplayedSecondBuyItem();            
             ItemStack sellItem = offer.getSellItem();
 
             // logoljuk
