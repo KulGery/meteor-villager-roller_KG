@@ -33,9 +33,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: 'villager-roller-ci.jar'
-          path: |
-            'build/libs/*.jar'
-            '!build/libs/*_dev.jar'
-            '!build/libs/*_sources.jar'
-            '!build/libs/*_shadow.jar'
+          path: 'build/libs/*.jar'            
           archive: false
