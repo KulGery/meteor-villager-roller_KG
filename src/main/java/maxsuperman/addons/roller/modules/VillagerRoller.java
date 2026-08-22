@@ -811,8 +811,8 @@ public class VillagerRoller extends Module {
         }}
 
         String Signals="There are";
-        if (isPaper) {Signals=Signals+" Paper";}
-        if (isEnch) {Signals=Signals+" Enchantment";}
+        if (isPaper) {Signals+=" Paper";}
+        if (isEnch) {Signals+=(isPaper ? " &" : "")+" Enchantment";}
         info(Signals);
 
         mc.player.closeHandledScreen();
