@@ -766,10 +766,10 @@ public class VillagerRoller extends Module {
                     }
                     continue;
                 }
-                if (e.maxCost > 0 && offer.getOriginalFirstBuyItem().getCount() > e.maxCost) {
+                if (e.maxCost > 0 && trEnch.getOriginalFirstBuyItem().getCount() > e.maxCost) {
                     if (cfTooExpensive.get()) {
                         info(String.format("Found enchant %s but it costs too much: %s (max price) < %d (cost)",
-                            enchantName, e.maxCost, offer.getOriginalFirstBuyItem().getCount()));
+                            enchantName, e.maxCost, trEnch.getOriginalFirstBuyItem().getCount()));
                     }
                     continue;
                 }
@@ -778,7 +778,7 @@ public class VillagerRoller extends Module {
                 if (cfFoundMatching.get()) {
                     info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
                         //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
-                        enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
+                        enchantName, enchantLevel, trEnch.getOriginalFirstBuyItem().getCount()));
                 }
                 toggle(); // lekapcsolja a Villager Rollert
                 if (enablePlaySound.get() && !sound.get().isEmpty()) {
@@ -798,7 +798,7 @@ public class VillagerRoller extends Module {
                         levelText,
                         Formatting.GRAY,
                         Formatting.WHITE,
-                        offer.getOriginalFirstBuyItem().getCount(),
+                        trEnch.getOriginalFirstBuyItem().getCount(),
                         Formatting.GRAY
                     );
                     mc.getNetworkHandler().getConnection().disconnect(Text.of(message));
