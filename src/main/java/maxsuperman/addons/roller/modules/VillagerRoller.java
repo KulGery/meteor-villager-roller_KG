@@ -702,6 +702,7 @@ public class VillagerRoller extends Module {
         Boolean isEnch=false;
         TradeOffer trPaper=null;
         TradeOffer trEnch=null;
+        ItemStack itEnch=null;
         for (TradeOffer offer : l) {
             // Elsőnel betöltjük mind a három részét a Trade-nek... Persze kérdés, hogy kell-e a másodikat betölteni.. az csak enchantnál van.
             // Ha az első papír akkor jelöljük és betesszük a trPaper-be
@@ -727,16 +728,19 @@ public class VillagerRoller extends Module {
             
             if (sellItem.isOf(Items.ENCHANTED_BOOK) && !(sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)){
                 isEnch=true;
-                if (trEnch==null) {trEnch=offer;}
+                if (trEnch==null) {
+                    trEnch=offer;
+                    itEnch=sellItem;
+                }
             }
 
         }
 
         // Original Routine (Was in For Cycle, trEnch was sellItem)
-        if (!trEnch.isOf(Items.ENCHANTED_BOOK) || trEnch.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
+        if (!itEnch.isOf(Items.ENCHANTED_BOOK) || itEnch.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
             continue;
 
-        for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(trEnch)) {
+        for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(itEnch)) {
             int enchantLevel = enchant.right();
             var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
             String enchantIdString = reg.getId(enchant.key().value()).toString();
