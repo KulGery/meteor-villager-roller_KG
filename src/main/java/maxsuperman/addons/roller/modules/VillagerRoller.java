@@ -721,7 +721,7 @@ public class VillagerRoller extends Module {
             info(sTrade);
             if (firstBuy.isOf(Items.PAPER) && !isPaper) {
                 isPaper=true;
-                if (trPaper==null) tr{Paper=offer;}
+                if (trPaper==null) {trPaper=offer;}
                 //info(String.format("Found Paper on second Trade"));
             }
             
