@@ -737,8 +737,8 @@ public class VillagerRoller extends Module {
         }
 
         // Original Routine (Was in For Cycle, trEnch was sellItem)
-        if (!itEnch.isOf(Items.ENCHANTED_BOOK) || itEnch.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
-            continue;
+        if (isEnch) {
+            
 
         for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(itEnch)) {
             int enchantLevel = enchant.right();
@@ -808,7 +808,7 @@ public class VillagerRoller extends Module {
             if (!found && cfIgnored.get()) {
                 info(String.format("Found enchant %s but it is not in the list.", enchantName));
             }
-        }
+        }}
 
         String Signals="There are";
         if (isPaper) {Signals=Signals+" Paper";}
