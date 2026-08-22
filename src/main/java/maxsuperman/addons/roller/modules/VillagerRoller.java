@@ -312,7 +312,7 @@ public class VillagerRoller extends Module {
                 warning("You had 'Toggle on bind release' set to true, I just saved you some troubleshooting by turning it off");
             }
         }
-        currentState = State.WAITING_FOR_TARGET_BLOCK;
+        currentState = State.WAITING_FOR_TARGET_BLOCK; // Induláskor az első állapot, hogy megtudja melyik block a pulpitus
         if (cfSetup.get()) {
             info("Attack block you want to roll");
         }
@@ -700,12 +700,12 @@ public class VillagerRoller extends Module {
     public void triggerTradeCheck(TradeOfferList l) {
         Boolean isPaper=false;
         Boolean isEnch=false;
-        TradeOffer PaperTrade=null;
-        TradeOffer EnchTrade=null;
+        TradeOffer trPaper=null;
+        TradeOffer trEnch=null;
         for (TradeOffer offer : l) {
             // Elsőnel betöltjük mind a három részét a Trade-nek... Persze kérdés, hogy kell-e a másodikat betölteni.. az csak enchantnál van.
-            // Ha az első papír akkor jelöljük és betesszük a PaperTrade-be
-            // Ha a harmadik enchantolt, akkor jelöljük, és betesszük az EnchTrade-be
+            // Ha az első papír akkor jelöljük és betesszük a trPaper-be
+            // Ha a harmadik enchantolt, akkor jelöljük, és betesszük az trEnch-be
             // Illetve ha úgy van beállítva akkor kiírjuk a talált Trade-t (Enchantnál Neve, Szint, Ára)
             // Ha a trade-ket mi akarjuk tárolni, akkor a sok változós helyett elég a mit mennyiért. kivéve az enchantnál, ott kell a szint is.
             ItemStack firstBuy = offer.getOriginalFirstBuyItem();
@@ -721,87 +721,91 @@ public class VillagerRoller extends Module {
             info(sTrade);
             if (firstBuy.isOf(Items.PAPER) && !isPaper) {
                 isPaper=true;
-                if (PaperTrade==null) {PaperTrade=offer;}
+                if (trPaper==null) tr{Paper=offer;}
                 //info(String.format("Found Paper on second Trade"));
             }
             
             if (sellItem.isOf(Items.ENCHANTED_BOOK) && !(sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)){
                 isEnch=true;
-                if (EnchTrade==null) {EnchTrade=offer;}
+                if (trEnch==null) {trEnch=offer;}
             }
 
-            if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
-                continue;
+        }
 
-            for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(sellItem)) {
-                int enchantLevel = enchant.right();
-                var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
-                String enchantIdString = reg.getId(enchant.key().value()).toString();
-                String enchantName = Names.get(enchant.key());
+        // Original Routine (Was in For Cycle, trEnch was sellItem)
+        if (!trEnch.isOf(Items.ENCHANTED_BOOK) || trEnch.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
+            continue;
 
-                boolean found = false;
-                for (RollingEnchantment e : searchingEnchants) {
-                    if (!e.enabled || !e.enchantment.toString().equals(enchantIdString)) continue;
-                    found = true;
-                    if (e.minLevel <= 0) {
-                        int ml = enchant.key().value().getMaxLevel();
-                        if (enchantLevel < ml) {
-                            if (cfLowerLevel.get()) {
-                                info(String.format("Found enchant %s but it is not max level: %d (max) > %d (found)",
-                                    enchantName, ml, enchantLevel));
-                            }
-                            continue;
-                        }
-                    } else if (e.minLevel > enchantLevel) {
+        for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(trEnch)) {
+            int enchantLevel = enchant.right();
+            var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+            String enchantIdString = reg.getId(enchant.key().value()).toString();
+            String enchantName = Names.get(enchant.key());
+
+            boolean found = false;
+            for (RollingEnchantment e : searchingEnchants) {
+                if (!e.enabled || !e.enchantment.toString().equals(enchantIdString)) continue;
+                found = true;
+                if (e.minLevel <= 0) { // wait for max level
+                    int ml = enchant.key().value().getMaxLevel();
+                    if (enchantLevel < ml) {
                         if (cfLowerLevel.get()) {
-                            info(String.format("Found enchant %s but it has too low level: %d (requested level) > %d (rolled level)",
-                                enchantName, e.minLevel, enchantLevel));
+                            info(String.format("Found enchant %s but it is not max level: %d (max) > %d (found)",
+                                enchantName, ml, enchantLevel));
                         }
                         continue;
                     }
-                    if (e.maxCost > 0 && offer.getOriginalFirstBuyItem().getCount() > e.maxCost) {
-                        if (cfTooExpensive.get()) {
-                            info(String.format("Found enchant %s but it costs too much: %s (max price) < %d (cost)",
-                                enchantName, e.maxCost, offer.getOriginalFirstBuyItem().getCount()));
-                        }
-                        continue;
+                } else if (e.minLevel > enchantLevel) { //wait for bigger level
+                    if (cfLowerLevel.get()) {
+                        info(String.format("Found enchant %s but it has too low level: %d (requested level) > %d (rolled level)",
+                            enchantName, e.minLevel, enchantLevel));
                     }
-                    if (disableIfFound.get()) e.enabled = false;
-                    if (cfFoundMatching.get()) {
-                        info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
-                            //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
-                            enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
-                    }
-                    toggle();
-                    if (enablePlaySound.get() && !sound.get().isEmpty()) {
-                        mc.getSoundManager().play(PositionedSoundInstance.master(sound.get().get(0),
-                            soundPitch.get().floatValue(), soundVolume.get().floatValue()));
-                    }
-                    if (disconnectIfFound.get()) {
-                        String levelText = (enchantLevel > 1 || enchant.key().value().getMaxLevel() > 1) ? " " + enchantLevel : "";
-                        String message = String.format(
-                            "%s[%s%s%s] Found enchant %s%s%s%s for %s%d%s emeralds and automatically disconnected.",
-                            Formatting.GRAY,
-                            Formatting.GREEN,
-                            title,
-                            Formatting.GRAY,
-                            Formatting.WHITE,
-                            enchantName,
-                            levelText,
-                            Formatting.GRAY,
-                            Formatting.WHITE,
-                            offer.getOriginalFirstBuyItem().getCount(),
-                            Formatting.GRAY
-                        );
-                        mc.getNetworkHandler().getConnection().disconnect(Text.of(message));
-                    }
-                    break;
+                    continue;
                 }
-                if (!found && cfIgnored.get()) {
-                    info(String.format("Found enchant %s but it is not in the list.", enchantName));
+                if (e.maxCost > 0 && offer.getOriginalFirstBuyItem().getCount() > e.maxCost) {
+                    if (cfTooExpensive.get()) {
+                        info(String.format("Found enchant %s but it costs too much: %s (max price) < %d (cost)",
+                            enchantName, e.maxCost, offer.getOriginalFirstBuyItem().getCount()));
+                    }
+                    continue;
                 }
+                // not continoued so found the expected enchantment.
+                if (disableIfFound.get()) e.enabled = false;
+                if (cfFoundMatching.get()) {
+                    info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
+                        //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
+                        enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
+                }
+                toggle(); // lekapcsolja a Villager Rollert
+                if (enablePlaySound.get() && !sound.get().isEmpty()) {
+                    mc.getSoundManager().play(PositionedSoundInstance.master(sound.get().get(0),
+                        soundPitch.get().floatValue(), soundVolume.get().floatValue()));
+                }
+                if (disconnectIfFound.get()) {
+                    String levelText = (enchantLevel > 1 || enchant.key().value().getMaxLevel() > 1) ? " " + enchantLevel : "";
+                    String message = String.format(
+                        "%s[%s%s%s] Found enchant %s%s%s%s for %s%d%s emeralds and automatically disconnected.",
+                        Formatting.GRAY,
+                        Formatting.GREEN,
+                        title,
+                        Formatting.GRAY,
+                        Formatting.WHITE,
+                        enchantName,
+                        levelText,
+                        Formatting.GRAY,
+                        Formatting.WHITE,
+                        offer.getOriginalFirstBuyItem().getCount(),
+                        Formatting.GRAY
+                    );
+                    mc.getNetworkHandler().getConnection().disconnect(Text.of(message));
+                }
+                break;
+            }
+            if (!found && cfIgnored.get()) {
+                info(String.format("Found enchant %s but it is not in the list.", enchantName));
             }
         }
+
         String Signals="There are";
         if (isPaper) {Signals=Signals+" Paper";}
         if (isEnch) {Signals=Signals+" Enchantment";}
@@ -817,7 +821,7 @@ public class VillagerRoller extends Module {
         if (!(event.entity instanceof VillagerEntity villager)) return;
 
         rollingVillager = villager;
-        currentState = State.ROLLING_BREAKING_BLOCK;
+        currentState = State.ROLLING_BREAKING_BLOCK; // ennek a trade checknek kellene lennie...
         if (cfSetup.get()) {
             info("We got your villager");
         }
@@ -852,89 +856,89 @@ public class VillagerRoller extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         switch (currentState) {
-            case ROLLING_BREAKING_BLOCK -> {
+            case ROLLING_BREAKING_BLOCK -> { // Kitöri a pulpitust
                 if (instantRebreak.get()) {
                     mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, rollingBlockPos, Direction.DOWN));
                 }
                 if (mc.world.getBlockState(rollingBlockPos) == Blocks.AIR.getDefaultState()) {
                     // info("Block is broken, waiting for villager to clean profession...");
-                    currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR;
+                    currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR; // Következő állapot: Falusi vegye észre a pulpitus hiányát.
                 } else if (!instantRebreak.get() && !BlockUtils.breakBlock(rollingBlockPos, true)) {
                     error("Can not break specified block");
                     toggle();
                 }
             }
-            case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR -> {
+            case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_CLEAR -> { // Falusi, nincs pulpitus!
                 if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
                     if (cfDiscrepancy.get()) {
                         info("Rolling block mining reverted?");
                     }
-                    currentState = State.ROLLING_BREAKING_BLOCK;
+                    currentState = State.ROLLING_BREAKING_BLOCK; // Következő állapot (Még ott a pulpitus) Pulpitus törése
                     return;
                 }
                 rollingVillager.getVillagerData().profession().getKey().ifPresent(profession -> {
                     if (profession == VillagerProfession.NONE) {
                         // info("Profession cleared");
-                        currentState = State.ROLLING_PLACING_BLOCK;
+                        currentState = State.ROLLING_PLACING_BLOCK; // Következő állapot: Pulpitus lerakása
                     }
                 });
             }            
-            case ROLLING_PLACING_BLOCK -> {
-                if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
+            case ROLLING_PLACING_BLOCK -> { // Pulpitus lerakása
+                if (mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) { // Már ott van.
                     if (cfBlockPlaceBounce.get()) {
                         info("Lectern placement bounced?");
                     }
-                    currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW;
+                    currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW; // Következő állapot (Már ott a pulpitus): Falusi vegye észre
                     return;
                 }
-                FindItemResult item = InvUtils.findInHotbar(rollingBlock.asItem());
-                if (!item.found()) {
+                FindItemResult item = InvUtils.findInHotbar(rollingBlock.asItem()); // Pulpitus megkeresése a hotbar-on
+                if (!item.found()) { // Nincs ott
                     placeFailed("Lectern not found in hotbar");
                     return;
                 }
-                if (!BlockUtils.canPlace(rollingBlockPos, true)) {
+                if (!BlockUtils.canPlace(rollingBlockPos, true)) { // Nem tudja lerakni
                     placeFailed("Can't place lectern");
                     return;
                 }
-                if (!BlockUtils.place(rollingBlockPos, item, headRotateOnPlace.get(), 5)) {
+                if (!BlockUtils.place(rollingBlockPos, item, headRotateOnPlace.get(), 5)) { // nem tudta lerakni
                     placeFailed("Failed to place lectern");
                     return;
                 }
-                currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW;
+                currentState = State.ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW; // következő állapot: Falusi vegye észre!
                 if (maxProfessionWaitTime.get() > 0) {
-                    currentProfessionWaitTime = System.currentTimeMillis();
+                    currentProfessionWaitTime = System.currentTimeMillis(); // idő indítása
                 }
             }
-            case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW -> {
+            case ROLLING_WAITING_FOR_VILLAGER_PROFESSION_NEW -> { // Vár hogy a Falusi észrevegye a pulpitust
                 if (maxProfessionWaitTime.get() > 0 && (currentProfessionWaitTime + maxProfessionWaitTime.get() <= System.currentTimeMillis())) {
                     if (cfProfessionTimeout.get()) {
                         info("Villager did not take profession within the specified time");
                     }
-                    currentState = State.ROLLING_BREAKING_BLOCK;
+                    currentState = State.ROLLING_BREAKING_BLOCK; // Következő lépés (nem vette észre sok ideig), pulpitus törése
                     return;
                 }
                 if (mc.world.getBlockState(rollingBlockPos) == Blocks.AIR.getDefaultState()) {
                     if (cfDiscrepancy.get()) {
                         info("Lectern placement reverted by server (AC?)");
                     }
-                    currentState = State.ROLLING_PLACING_BLOCK;
+                    currentState = State.ROLLING_PLACING_BLOCK; // Következő lépés (Nincs Pulpitus), Pulpitus lerakása
                     return;
                 }
                 if (!mc.world.getBlockState(rollingBlockPos).isOf(Blocks.LECTERN)) {
                     if (cfDiscrepancy.get()) {
                         info("Placed wrong block?!");
                     }
-                    currentState = State.ROLLING_BREAKING_BLOCK;
+                    currentState = State.ROLLING_BREAKING_BLOCK; // Következő lépés (Nem pulpitus), Block törése
                     return;
                 }
                 rollingVillager.getVillagerData().profession().getKey().ifPresent(profession -> {
                     if (profession != VillagerProfession.NONE) {
-                        currentState = State.ROLLING_WAITING_FOR_VILLAGER_TRADES;
+                        currentState = State.ROLLING_WAITING_FOR_VILLAGER_TRADES; // Következő lépés, Kereskedésekre várva
                         triggerInteract();
                     }
                 });
             }
-            case ROLLING_WAITING_FOR_VILLAGER_TRADES -> {
+            case ROLLING_WAITING_FOR_VILLAGER_TRADES -> { //Várakozik, és újraküldi a jobb gombot, amíg nem érkezett válasz.
                 var retryTicks = interactRetry.get();
                 if (retryTicks > 0) {
                     if (waitingForTradesTicks >= retryTicks) {
