@@ -489,7 +489,7 @@ public class VillagerRoller extends Module {
             final int si = i;
             ItemStack book = Items.ENCHANTED_BOOK.getDefaultStack();
             int maxlevel = 255;
-            if (en.isPresent()) {
+            if (en.isPresent()) { // Ha megtaláltuk a keresett Enchantmentet
                 book = EnchantmentHelper.getEnchantedBookWith(new EnchantmentLevelEntry(en.get(), en.get().value().getMaxLevel()));
                 maxlevel = en.get().value().getMaxLevel();
             }
@@ -511,13 +511,40 @@ public class VillagerRoller extends Module {
 
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
             lev.action = () -> e.minLevel = lev.get();
-            lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
+            //lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
+            // "Minimum enchantment level. Set to 0 for maximum level (defaults to 1 for custom enchantments)."
+            lev.tooltip = "Minimum enchantment level to search for. Entering 0 automatically selects the maximum possible level (for custom enchantments, 0 defaults to level 1).";
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
+            // Itt figyelni kellene hogy 0; minimum és maximum limiteken le lépjen túl
+            // Ugyanígy az optimalt át kell írni mimimumra, és az optimális ár a max-minimum 25%-a
+            // Minimum: (2+3*level)*treause
+            // Maximum: Min(64,(6+13*level)*treasure))
+            // Optimum: Mimimum + ((Max-Min)*0.25) => (Min*3+Max)/4
             cost.action = () -> e.maxCost = cost.get();
-            cost.tooltip = "Maximum cost in emeralds, 0 means no limit";
+            /*
+            // Ehhez rögzítenin kell a mincost és maxcost értékeket is
+            cost.action = () -> {
+                int val = cost.get();
 
+                if (val > 1 && val < minCost) {
+                    val = minCost;
+                    cost.set(minCost);
+                } else if ((val < 0) || (val=1)) {
+                    val = 0;
+                    cost.set(0);
+                } else if (val > maxCost) {
+                    val = maxCost;
+                    cost.set(maxCost);
+                }
+
+                e.maxCost = val;
+            };
+            */
+            cost.tooltip = "Maximum cost in emeralds, 0 means no limit";
+            
+            // Ez nem Optimal, hanem minimum! Az Optimal Price képletét fent írtam.
             WButton setOptimal = costbox.add(theme.button("O")).widget();
             setOptimal.tooltip = "Set to optimal price (2 + maxLevel*3) (double if treasure) (if known)";
             setOptimal.action = () -> {
@@ -541,14 +568,14 @@ public class VillagerRoller extends Module {
 
         WTable controls = list.add(theme.table()).expandX().widget();
 
-        WButton removeAll = controls.add(theme.button("Remove all")).expandX().widget();
+        WButton removeAll = controls.add(theme.button("Remove all")).expandX().widget(); // Minden okosság elvétele
         removeAll.action = () -> {
             list.clear();
             searchingEnchants.clear();
             fillWidget(theme, list);
         };
 
-        WButton add = controls.add(theme.button("Add")).expandX().widget();
+        WButton add = controls.add(theme.button("Add")).expandX().widget(); // Egy okosság hozzáadása
         add.action = () -> mc.setScreen(new EnchantmentSelectScreen(theme, onlyTradeable.get(), e -> {
             e.minLevel = 1;
             e.maxCost = 64;
@@ -558,7 +585,7 @@ public class VillagerRoller extends Module {
             fillWidget(theme, list);
         }));
 
-        WButton addAll = controls.add(theme.button("Add all")).expandX().widget();
+        WButton addAll = controls.add(theme.button("Add all")).expandX().widget(); // Minden okosság hozzáadása, maximális szinten, a legalacsonyabb áron
         addAll.action = () -> {
             list.clear();
             searchingEnchants.clear();
@@ -571,7 +598,7 @@ public class VillagerRoller extends Module {
         };
         controls.row();
 
-        WButton setOptimalForAll = controls.add(theme.button("Set optimal for all")).expandX().widget();
+        WButton setOptimalForAll = controls.add(theme.button("Set optimal for all")).expandX().widget(); //Adott okosság, adott szinten beállítani a legalacsonyabb árat
         setOptimalForAll.action = () -> {
             list.clear();
             if (reg.isPresent()) {
@@ -582,7 +609,7 @@ public class VillagerRoller extends Module {
             fillWidget(theme, list);
         };
 
-        WButton priceBumpUp = controls.add(theme.button("+1 to price for all")).expandX().widget();
+        WButton priceBumpUp = controls.add(theme.button("+1 to price for all")).expandX().widget(); // Ár növelése 1-el
         priceBumpUp.action = () -> {
             list.clear();
             for (RollingEnchantment e : searchingEnchants) {
@@ -591,7 +618,7 @@ public class VillagerRoller extends Module {
             fillWidget(theme, list);
         };
 
-        WButton priceBumpDown = controls.add(theme.button("-1 to price for all")).expandX().widget();
+        WButton priceBumpDown = controls.add(theme.button("-1 to price for all")).expandX().widget(); // Ár csökkentése 1-el
         priceBumpDown.action = () -> {
             list.clear();
             for (RollingEnchantment e : searchingEnchants) {
@@ -601,7 +628,7 @@ public class VillagerRoller extends Module {
         };
         controls.row();
 
-        WButton setZeroForAll = controls.add(theme.button("Set zero price for all")).expandX().widget();
+        WButton setZeroForAll = controls.add(theme.button("Set zero price for all")).expandX().widget(); // Összes árának 0-sa, azaz bármely árat elfogad
         setZeroForAll.action = () -> {
             list.clear();
             for (RollingEnchantment e : searchingEnchants) {
@@ -610,7 +637,7 @@ public class VillagerRoller extends Module {
             fillWidget(theme, list);
         };
 
-        WButton enableAll = controls.add(theme.button("Enable all")).expandX().widget();
+        WButton enableAll = controls.add(theme.button("Enable all")).expandX().widget(); // Összeset engedélyezi
         enableAll.action = () -> {
             list.clear();
             for (RollingEnchantment e : searchingEnchants) {
@@ -619,7 +646,7 @@ public class VillagerRoller extends Module {
             fillWidget(theme, list);
         };
 
-        WButton disableAll = controls.add(theme.button("Disable all")).expandX().widget();
+        WButton disableAll = controls.add(theme.button("Disable all")).expandX().widget(); // Összeset letiltja
         disableAll.action = () -> {
             list.clear();
             for (RollingEnchantment e : searchingEnchants) {
@@ -631,20 +658,21 @@ public class VillagerRoller extends Module {
 
     }
 
-    public List<RegistryEntry<Enchantment>> getEnchants(boolean onlyTradeable) {
+    public List<RegistryEntry<Enchantment>> getEnchants(boolean onlyTradeable) { // okosságok lekérése
+        // Elvileg kiegészíthetnénk a listát a már kifűzött adatokkal, hogy ne kelljen mélyében turkálni.
         if (mc.world == null) {
             return Collections.emptyList();
         }
-        var reg = mc.world.getRegistryManager().getOptional(RegistryKeys.ENCHANTMENT);
+        var reg = mc.world.getRegistryManager().getOptional(RegistryKeys.ENCHANTMENT); // Összes okosság lekérése
         if (reg.isEmpty()) {
             return Collections.emptyList();
         }
         List<RegistryEntry<Enchantment>> available = new ArrayList<>();
-        if (onlyTradeable) {
+        if (onlyTradeable) { // Ha csak kereskedhető
             var i = reg.get().iterateEntries(EnchantmentTags.TRADEABLE);
             i.iterator().forEachRemaining(available::add);
             return available;
-        } else {
+        } else { // Mindet lekéri. Ez azért kell, mert ha modolt a szerver, akkor lehet nem tradelhető is a falusinál
             for (var a : reg.get().getIndexedEntries()) {
                 available.add(a);
             }
@@ -698,6 +726,23 @@ public class VillagerRoller extends Module {
     }
 
     public void triggerTradeCheck(TradeOfferList l) {
+        // trade adatok: Miket miért
+        // 24 papír => Smari
+        // Első tétel a kincs, második a smari de mivel mindig smari, ezért csak szám
+        // 24 papír => 1
+        // papír => 24  24 papír egy smari
+        // Polc <= 9  9smari egy polc
+        // Üveg <= 15:4   15 smari 4 üveg
+        // EKönyv <= 10   10 smari (és egy könyv) az okoskönyv
+        // EPáncél <= 10+dia 10 smari+1dia
+        // EPáncél <= 15+2dia 15 smari+2dia
+        // Lényeg, az ár mindenképp kiírva, akkor is ha 1. a másodlagos csak ha nagyobb. Ha több darabot kap, akkor : után
+        // tárgy neve + ha smarit kap, akkor a tárgy darabszáma [:+ a másodlagos [száma]tárgya] 
+        // tárgy neve + ha nem smarit kap, akkor a smari darabszáma + a másodlagos [száma]tárgya
+        // Tehát irány, tárgy, ár, kiegészítés tárgya, darabja
+        // Ha sell smaragd akkor irány =>, játékos elad; falusi megvesz
+        //  Nem szokott lenni, hogy a tárgyat egyébb tárggyal adjuk.
+        // Ezért inkább EPáncél<= 10+dia alak szokott lenni
         Boolean isPaper=false;
         Boolean isEnch=false;
         TradeOffer trPaper=null;
@@ -718,8 +763,8 @@ public class VillagerRoller extends Module {
             String sTrade = firstBuy.getCount() + "x " + firstBuy.getItem().getName().getString() + "  " 
               + secondStr 
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
-
             info(sTrade);
+            
             if (firstBuy.isOf(Items.PAPER) && !isPaper) {
                 isPaper=true;
                 if (trPaper==null) {trPaper=offer;}
