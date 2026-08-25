@@ -785,19 +785,21 @@ public class VillagerRoller extends Module {
         //public extEnchantList ByEnch;
 
         public extTrade(TradeOffer o) {
-            this.rTrade=rawTrade(o);
+            this.rTrade=new rawTrade(o);
             //this.Sell=this.rTrade.Sell.isOf(Items.EMERALD);
-            this.Sell=rTrade.Sell.ID="minecraft:emerald";
+            this.Sell=rTrade.Sell.ID=="minecraft:emerald";
             ItemStack By=o.getOriginalFirstBuyItem();
             ItemStack By2=o.getDisplayedSecondBuyItem();
             ItemStack Sll=o.getSellItem();
             ItemStack It=(this.Sell) ? Sll:By;
             //ItemStack Pr=(this.Sell) ? By:Sll;
-            this.Item=It.getName().getString();
+            //this.Item=It.getItem().getName().getString();
+            this.Item=It.getItemName().getString();
             this.Price=By.getCount();
             this.Count=Sll.getCount();
-            this.sItem=By2.GetName().getString();
-            this.sCount=By2.getCount();
+            //this.sItem=By2.getItem().getName().getString();
+            this.sItem=By2.getItemName().getString();
+            this.sPrice=By2.getCount();
             // És hol az enchantok? És minek az enchantjai?
         }
     }
@@ -842,10 +844,11 @@ public class VillagerRoller extends Module {
             // logoljuk
             String secondStr = secondBuy.isEmpty() ? "" : secondBuy.getCount() + "x " + secondBuy.getItem().getName().getString() + "  ";
             String sTrade = firstBuy.getCount() + "x " + firstBuy.getItem().getName().getString() + "  " 
-              + secondStr 
-              + "Sell_ID:" + sellItem.getID().getString()
-              + "Sell_ID2:" + sellItem.getItem().getID().getString()
-              + "Sell_Tp:" + sellItem.getType().getString()
+              + secondStr               
+              + " Sell_Item:" + sellItem.getName().getString()
+              + " Sell_ID2:" + sellItem.getItem().getString()              
+              + " Sell_FrmName:" + sellItem.getFormattedName().getString()
+              + " Sell:" sellItem.toString()
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
             info(sTrade);
             
