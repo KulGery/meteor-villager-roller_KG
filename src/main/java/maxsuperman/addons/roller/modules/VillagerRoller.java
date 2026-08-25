@@ -848,7 +848,7 @@ public class VillagerRoller extends Module {
               + " Sell_Item:" + sellItem.getName().getString()
               + " Sell_ID2:" + sellItem.getItem().getString()              
               + " Sell_FrmName:" + sellItem.getFormattedName().getString()
-              + " Sell:" sellItem.toString()
+              + " Sell:" + sellItem.toString()
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
             info(sTrade);
             
