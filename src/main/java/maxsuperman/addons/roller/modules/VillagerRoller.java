@@ -846,10 +846,11 @@ public class VillagerRoller extends Module {
             String secondStr = secondBuy.isEmpty() ? "" : secondBuy.getCount() + "x " + secondBuy.getItem().getName().getString() + "  ";
             String sTrade = firstBuy.getCount() + "x " + firstBuy.getItem().getName().getString() + "  " 
               + secondStr               
-              + " Sell_Item:" + sellItem.getName().getString()
+              + "\nSell_Item:" + sellItem.getName().getString()
               //+ " Sell_ID2:" + sellItem.getItem().getString()              
-              + " Sell_FrmName:" + sellItem.getFormattedName().getString()
-              + " Sell:" + sellItem.toString()
+              //+ " Sell_FrmName:" + sellItem.getFormattedName().getString()
+              + "\nSell: '" + sellItem.toString() + "'"
+              + "\nBuy: '" + firstBuy.toString() + "'\n"
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
             info(sTrade);
             
