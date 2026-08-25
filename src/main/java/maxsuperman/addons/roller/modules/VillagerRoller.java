@@ -781,13 +781,14 @@ public class VillagerRoller extends Module {
         public String sItem="";
         public int sPrice=0;
         public int Count=0;
+        //public extEnchantList ByEnch;
 
-        public extTrade(TradeOffer) {
-            this.rawTrade=rawTrade(TradeOffer);
-            this.Sell=this.rawTrade.Sell=="minecraft:Emerald";
-            ItemStack By=TradeOffer.getOriginalFirstBuyItem();
-            ItemStack By2=TradeOffer.getDisplayedSecondBuyItem();
-            ItemStack Sll=TradeOffer.getSellItem();
+        public extTrade(TradeOffer o) {
+            this.rawTrade=rawTrade(o);
+            this.Sell=this.rawTrade.Sell.isOf(Items.EMERALD);
+            ItemStack By=o.getOriginalFirstBuyItem();
+            ItemStack By2=o.getDisplayedSecondBuyItem();
+            ItemStack Sll=To.getSellItem();
             ItemStack It=(this.Sell) ? Sll:By;
             //ItemStack Pr=(this.Sell) ? By:Sll;
             this.Item=It.getName().getString();
@@ -795,6 +796,7 @@ public class VillagerRoller extends Module {
             this.Count=Sll.getCount();
             this.sItem=By2.GetName().getString();
             this.sCount=By2.getCount();
+            // És hol az enchantok? És minek az enchantjai?
         }
     }
     public void triggerTradeCheck(TradeOfferList l) {
