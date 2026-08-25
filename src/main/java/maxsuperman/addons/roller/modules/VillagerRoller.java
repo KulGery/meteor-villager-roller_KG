@@ -777,7 +777,7 @@ public class VillagerRoller extends Module {
         public rawTrade rTrade;
         public String Item="";
         public int Price = 0;
-        public boulean Sell=false;
+        public boolean Sell=false;
         public String sItem="";
         public int sPrice=0;
         public int Count=0;
