@@ -850,7 +850,8 @@ public class VillagerRoller extends Module {
               //+ " Sell_ID2:" + sellItem.getItem().getString()              
               //+ " Sell_FrmName:" + sellItem.getFormattedName().getString()
               + "\nSell: '" + sellItem.toString() + "'"
-              + "\nBuy: '" + firstBuy.toString() + "'\n"
+              + "\nBuy: '" + firstBuy.toString() + "'"
+              + "\nsItem: '" + sellItem.getItem().toString() + "'\n"
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
             info(sTrade);
             
