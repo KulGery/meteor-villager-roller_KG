@@ -725,7 +725,74 @@ public class VillagerRoller extends Module {
         mc.executeSync(() -> triggerTradeCheck(p.getOffers()));
     }
 
+    private class rawTradeItem {
+        public String ID="";
+        public int Count=0;
+
+        // 1. Alapértelmezett üres konstruktor (ha kézzel hoznád létre)
+        public rawTradeItem() {
+        }
+
+        // 2. Adat-alapú konstruktor (közvetlen értékekből)
+        public rawTradeItem(String id, int count) {
+            this.ID = id;
+            this.Count = count;
+        }
+
+        // 3. Minecraft ItemStack-ből építkező konstruktor (1.21.x kompatibilis)
+        public rawTradeItem(ItemStack stack) {
+            if (stack != null && !stack.isEmpty()) {
+                // Megadja a pontos azonosítót (pl. "minecraft:paper" vagy "minecraft:enchanted_book")
+                this.ID = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+                this.Count = stack.getCount();
+            }
+        }
+    }
+    private class rawTrade {
+        public rawTradeItem Buy1;
+        public rawTradeItem Buy2;
+        public rawTradeItem Sell;
+
+        // 1. Konstruktor: Közvetlen rawTradeItem elemekből
+        public rawTrade(rawTradeItem buy1, rawTradeItem buy2, rawTradeItem sell) {
+            this.Buy1 = buy1;
+            this.Buy2 = buy2;
+            this.Sell = sell;
+        }
+
+        // 2. Konstruktor: Direct ItemStack-ekből
+        public rawTrade(ItemStack buy1, ItemStack buy2, ItemStack sell) {
+            this.Buy1 = (buy1 != null && !buy1.isEmpty()) ? new rawTradeItem(buy1) : null;
+            this.Buy2 = (buy2 != null && !buy2.isEmpty()) ? new rawTradeItem(buy2) : null;
+            this.Sell = (sell != null && !sell.isEmpty()) ? new rawTradeItem(sell) : null;
+        }
+
+        // 3. Konstruktor: Minecraft TradeOffer / MerchantOffer objektumból
+        public rawTrade(TradeOffer offer) {
+            // A modded/vanilla API-tól függően (pl. offer.getOriginalFirstBuyItem() / offer.getSellItem())
+            this(offer.getOriginalFirstBuyItem(), offer.getSecondBuyItem().orElse(ItemStack.EMPTY), offer.getSellItem());
+        }
+    }
+    private class extTrade {
+        public rawTrade rTrade;
+        public String Item="";
+        public int Price = 0;
+        public boulean Sell=false;
+        public String sItem="";
+        public int sPrice=0;
+
+        public extTrade(TradeOffer) {
+            this.rawTrade=rawTrade(TradeOffer);
+            this.Sell=this.rawTrade.Sell=="minecraft:Emerald"
+            this.Item=(this.Sell) ? TradeOffer.getSellItem().
+
+        }
+    }
     public void triggerTradeCheck(TradeOfferList l) {
+        // Tárolni kéne még a falusit is...
+        // Illetve a Tárgyat mint mutatót, és az enchantokat is mint mutatót
+        //  meg kellene tárolni a falusit is... hogy kié a trade
+        //  meg azt is, hogy fixált-e
         // trade adatok: Miket miért
         // 24 papír => Smari
         // Első tétel a kincs, második a smari de mivel mindig smari, ezért csak szám
@@ -739,7 +806,8 @@ public class VillagerRoller extends Module {
         // Lényeg, az ár mindenképp kiírva, akkor is ha 1. a másodlagos csak ha nagyobb. Ha több darabot kap, akkor : után
         // tárgy neve + ha smarit kap, akkor a tárgy darabszáma [:+ a másodlagos [száma]tárgya] 
         // tárgy neve + ha nem smarit kap, akkor a smari darabszáma + a másodlagos [száma]tárgya
-        // Tehát irány, tárgy, ár, kiegészítés tárgya, darabja
+        // Tehát irány, tárgy, ár, darab, kiegészítés tárgya, darabja 
+        //   (az ár, darab a buy az ár, a sell a darab Ha 24 papírért két smarit kapok akkor 24:2-d az ára a smarinak)
         // Ha sell smaragd akkor irány =>, játékos elad; falusi megvesz
         //  Nem szokott lenni, hogy a tárgyat egyébb tárggyal adjuk.
         // Ezért inkább EPáncél<= 10+dia alak szokott lenni
@@ -762,6 +830,9 @@ public class VillagerRoller extends Module {
             String secondStr = secondBuy.isEmpty() ? "" : secondBuy.getCount() + "x " + secondBuy.getItem().getName().getString() + "  ";
             String sTrade = firstBuy.getCount() + "x " + firstBuy.getItem().getName().getString() + "  " 
               + secondStr 
+              + "Sell_ID:" + sellItem.getID().getString()
+              + "Sell_ID2:" + sellItem.getItem().getID().getString()
+              + "Sell_Tp:" + sellItem.getType().getString()
               + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
             info(sTrade);
             
@@ -781,7 +852,7 @@ public class VillagerRoller extends Module {
 
         }
 
-        // Original Routine (Was in For Cycle, trEnch was sellItem)
+        // Original Routine (Was in For Cycle, itEnch was sellItem)
         if (isEnch) {
             
 
