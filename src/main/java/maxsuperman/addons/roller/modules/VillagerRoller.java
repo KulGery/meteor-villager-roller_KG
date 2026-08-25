@@ -780,12 +780,21 @@ public class VillagerRoller extends Module {
         public boulean Sell=false;
         public String sItem="";
         public int sPrice=0;
+        public int Count=0;
 
         public extTrade(TradeOffer) {
             this.rawTrade=rawTrade(TradeOffer);
-            this.Sell=this.rawTrade.Sell=="minecraft:Emerald"
-            this.Item=(this.Sell) ? TradeOffer.getSellItem().
-
+            this.Sell=this.rawTrade.Sell=="minecraft:Emerald";
+            ItemStack By=TradeOffer.getOriginalFirstBuyItem();
+            ItemStack By2=TradeOffer.getDisplayedSecondBuyItem();
+            ItemStack Sll=TradeOffer.getSellItem();
+            ItemStack It=(this.Sell) ? Sll:By;
+            //ItemStack Pr=(this.Sell) ? By:Sll;
+            this.Item=It.getName().getString();
+            this.Price=By.getCount();
+            this.Count=Sll.getCount();
+            this.sItem=By2.GetName().getString();
+            this.sCount=By2.getCount();
         }
     }
     public void triggerTradeCheck(TradeOfferList l) {
