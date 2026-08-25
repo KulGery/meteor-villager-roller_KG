@@ -743,7 +743,8 @@ public class VillagerRoller extends Module {
         public rawTradeItem(ItemStack stack) {
             if (stack != null && !stack.isEmpty()) {
                 // Megadja a pontos azonosítót (pl. "minecraft:paper" vagy "minecraft:enchanted_book")
-                this.ID = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+                //this.ID = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+                this.ID = stack.getItem().toString();
                 this.Count = stack.getCount();
             }
         }
@@ -770,7 +771,7 @@ public class VillagerRoller extends Module {
         // 3. Konstruktor: Minecraft TradeOffer / MerchantOffer objektumból
         public rawTrade(TradeOffer offer) {
             // A modded/vanilla API-tól függően (pl. offer.getOriginalFirstBuyItem() / offer.getSellItem())
-            this(offer.getOriginalFirstBuyItem(), offer.getSecondBuyItem().orElse(ItemStack.EMPTY), offer.getSellItem());
+            this(offer.getOriginalFirstBuyItem(), offer.getSecondBuyItem().ItemStack().orElse(ItemStack.EMPTY), offer.getSellItem());
         }
     }
     private class extTrade {
@@ -784,11 +785,12 @@ public class VillagerRoller extends Module {
         //public extEnchantList ByEnch;
 
         public extTrade(TradeOffer o) {
-            this.rawTrade=rawTrade(o);
-            this.Sell=this.rawTrade.Sell.isOf(Items.EMERALD);
+            this.rTrade=rawTrade(o);
+            //this.Sell=this.rTrade.Sell.isOf(Items.EMERALD);
+            this.Sell=rTrade.Sell.ID="minecraft:emerald";
             ItemStack By=o.getOriginalFirstBuyItem();
             ItemStack By2=o.getDisplayedSecondBuyItem();
-            ItemStack Sll=To.getSellItem();
+            ItemStack Sll=o.getSellItem();
             ItemStack It=(this.Sell) ? Sll:By;
             //ItemStack Pr=(this.Sell) ? By:Sll;
             this.Item=It.getName().getString();
