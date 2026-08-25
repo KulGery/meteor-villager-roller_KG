@@ -771,7 +771,7 @@ public class VillagerRoller extends Module {
         // 3. Konstruktor: Minecraft TradeOffer / MerchantOffer objektumból
         public rawTrade(TradeOffer offer) {
             // A modded/vanilla API-tól függően (pl. offer.getOriginalFirstBuyItem() / offer.getSellItem())
-            this(offer.getOriginalFirstBuyItem(), offer.getSecondBuyItem().ItemStack().orElse(ItemStack.EMPTY), offer.getSellItem());
+            this(offer.getOriginalFirstBuyItem(), offer.getSecondBuyItem().orElse(TradedItem.EMPTY).ItemStack(), offer.getSellItem());
         }
     }
     private class extTrade {
