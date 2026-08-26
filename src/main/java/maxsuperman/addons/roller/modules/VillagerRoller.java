@@ -705,22 +705,33 @@ public class VillagerRoller extends Module {
     }
 
     public void triggerTradeCheck(TradeOfferList l) { // l (el) is the first letter of list. Its a very short and simple variable name.
+        // Check Paper in trades (cfTradeWidthPaper)
+        boolean hasPaper= l.stream()
+            .anyMatch(o -> o.getOriginalFirstBuyItem().isOf(Items.PAPER));
+        
+       /*
+        boolean hasPaper=false;
+        for (TradeOffer offer : l) {
+            if (offer.getOriginalFirstBuyItem().isOf(Items.PAPER)) {
+                hasPaper = true;
+                break;
+            }
+        }
+        */
+
+        // Enchantment trade keresése
+        /*TradeOffer EBook= l.stream()
+            .filter(offer -> offer.getSellItem.isOf(Items.ENCHANTED_BOOK) && offer.getSellItem.contains(DataComponentTypes.STORED_ENCHANTMENTS))
+            .findFirst()
+            .orElse(null);
+        */
         for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
-            if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
+            //if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
+            if (!sellItem.isOf(Items.ENCHANTED_BOOK) || !sellItem.contains(DataComponentTypes.STORED_ENCHANTMENTS))
                 // If not Enchanted book, and has not enchants then next
                 continue;
-            // Check Paper in trades (cfTradeWidthPaper)
-            /*boolean hasPaper= l.stream()
-                .anyMatch(o -> o.getOriginalFirstBuyItem().isOf(Items.PAPER));
-            */           
-           boolean hasPaper=false;
-           for (TradeOffer offer : trades) {
-                if (offer.getOriginalFirstBuyItem().isOf(Items.PAPER)) {
-                    hasPaper = true;
-                    break;
-                }
-           }
+            
             // get enchants from our function
             for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(sellItem)) {
                 // the enchant
@@ -729,6 +740,11 @@ public class VillagerRoller extends Module {
                 String enchantIdString = reg.getId(enchant.key().value()).toString();
                 String enchantName = Names.get(enchant.key());
                 
+                /*
+                List<RollingEnchantment> matchingRules = searchingEnchants.stream()
+                    .filter(e -> e.enabled && e.enchantment.toString().equals(enchantIDString))
+                    .toList();  //  List of matching enchants (need check deep)
+                */
                 boolean found = false;
                 for (RollingEnchantment e : searchingEnchants) { // Végig megyünk a keresett enchantokon
                     if (!e.enabled || !e.enchantment.toString().equals(enchantIdString)) continue;
