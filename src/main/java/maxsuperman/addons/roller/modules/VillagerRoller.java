@@ -280,6 +280,13 @@ public class VillagerRoller extends Module {
         .build()
     );
 
+    private final Setting<Boolean> cfTradeWithPaper = sgChatFeedback.add(new BoolSetting.Builder()
+        .name("need-paper")
+        .description("Trade need paper to fix trades and farm Emeralds.")
+        .defaultValue(true)
+        .build()
+    );
+
     private enum State {
         DISABLED,
         WAITING_FOR_TARGET_BLOCK,
@@ -697,23 +704,36 @@ public class VillagerRoller extends Module {
         mc.executeSync(() -> triggerTradeCheck(p.getOffers()));
     }
 
-    public void triggerTradeCheck(TradeOfferList l) {
-        for (TradeOffer offer : l) {
+    public void triggerTradeCheck(TradeOfferList l) { // l (el) is the first letter of list. Its a very short and simple variable name.
+        for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
+                // If not Enchanted book, and has not enchants then next
                 continue;
-
+            // Check Paper in trades (cfTradeWidthPaper)
+            /*boolean hasPaper= l.stream()
+                .anyMatch(o -> o.getOriginalFirstBuyItem().isOf(Items.PAPER));
+            */           
+           boolean hasPaper=false;
+           for (TradeOffer offer : trades) {
+                if (offer.getOriginalFirstBuyItem().isOf(Items.PAPER)) {
+                    hasPaper = true;
+                    break;
+                }
+           }
+            // get enchants from our function
             for (Pair<RegistryEntry<Enchantment>, Integer> enchant : getEnchants(sellItem)) {
+                // the enchant
                 int enchantLevel = enchant.right();
-                var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+                var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT); // Lekérjük az enchantok registry kulcsát
                 String enchantIdString = reg.getId(enchant.key().value()).toString();
                 String enchantName = Names.get(enchant.key());
-
+                
                 boolean found = false;
-                for (RollingEnchantment e : searchingEnchants) {
+                for (RollingEnchantment e : searchingEnchants) { // Végig megyünk a keresett enchantokon
                     if (!e.enabled || !e.enchantment.toString().equals(enchantIdString)) continue;
-                    found = true;
-                    if (e.minLevel <= 0) {
+                    found = true; // találtunk keresett enchantot
+                    if (e.minLevel <= 0) { // a legnagyobb levelre keresünk
                         int ml = enchant.key().value().getMaxLevel();
                         if (enchantLevel < ml) {
                             if (cfLowerLevel.get()) {
@@ -721,7 +741,7 @@ public class VillagerRoller extends Module {
                                     enchantName, ml, enchantLevel));
                             }
                             continue;
-                        }
+                        } 
                     } else if (e.minLevel > enchantLevel) {
                         if (cfLowerLevel.get()) {
                             info(String.format("Found enchant %s but it has too low level: %d (requested level) > %d (rolled level)",
@@ -729,19 +749,25 @@ public class VillagerRoller extends Module {
                         }
                         continue;
                     }
-                    if (e.maxCost > 0 && offer.getOriginalFirstBuyItem().getCount() > e.maxCost) {
+                    if (e.maxCost > 0 && offer.getOriginalFirstBuyItem().getCount() > e.maxCost) { // Összeg ellenőrzése
                         if (cfTooExpensive.get()) {
                             info(String.format("Found enchant %s but it costs too much: %s (max price) < %d (cost)",
                                 enchantName, e.maxCost, offer.getOriginalFirstBuyItem().getCount()));
                         }
                         continue;
                     }
-                    if (disableIfFound.get()) e.enabled = false;
-                    if (cfFoundMatching.get()) {
+                    if (cfFoundMatching.get()) { // jelezzük, hogy megtaláltuk
                         info(String.format("Found matching enchant %s (level %d) for %d emeralds and stopped.",
                             //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
                             enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
                     }
+                    if (cfTradeWithPaper.get() && !hasPaper) { // lefogláshoz van papír?
+                        // Auch.. Ehhez kell a teljes kiértékelés! a másik vásárra innen nem látunk rá
+                        //  Megoldottuk így is.
+                        info("Matching trade has no paper to fix and farm emeralds. Stop withdrawn, rolling continues.");
+                        continue;
+                    }
+                    if (disableIfFound.get()) e.enabled = false; // disabláljuk
                     toggle();
                     if (enablePlaySound.get() && !sound.get().isEmpty()) {
                         mc.getSoundManager().play(PositionedSoundInstance.master(sound.get().get(0),
