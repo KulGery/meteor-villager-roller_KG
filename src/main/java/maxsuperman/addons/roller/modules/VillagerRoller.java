@@ -287,6 +287,13 @@ public class VillagerRoller extends Module {
         .build()
     );
 
+    private final Setting<Boolean> cfLogOffer = sgGeneral.add(new BoolSetting.Builder()
+        .name("log raw Offer")
+        .description("Print full Offer on Chat")
+        .defaultValue(false)
+        .build()
+    );
+
     private enum State {
         DISABLED,
         WAITING_FOR_TARGET_BLOCK,
@@ -727,6 +734,13 @@ public class VillagerRoller extends Module {
         */
         for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
+            // log Offer
+            If (cfLogOffer.get()) {
+                // logging the offer with raw text
+                String sTrade=offer.getOriginalFirstBuyItem().getCount + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
+                sTrade += "; " + (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
+                sTrade += "; " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
+            }
             //if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || !sellItem.contains(DataComponentTypes.STORED_ENCHANTMENTS))
                 // If not Enchanted book, and has not enchants then next
