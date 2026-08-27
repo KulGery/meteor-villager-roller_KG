@@ -740,6 +740,7 @@ public class VillagerRoller extends Module {
                 String sTrade=offer.getOriginalFirstBuyItem().getCount + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += "; " + (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
                 sTrade += "; " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
+                // get Enchantments is too complicated. Will be solved, when I make the rTrades
             }
             //if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || !sellItem.contains(DataComponentTypes.STORED_ENCHANTMENTS))
@@ -753,6 +754,11 @@ public class VillagerRoller extends Module {
                 var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT); // Lekérjük az enchantok registry kulcsát
                 String enchantIdString = reg.getId(enchant.key().value()).toString();
                 String enchantName = Names.get(enchant.key());
+                If (cfLogOffer.get()) {
+                    // Log enchants too
+                    String sEnch=sellItem.getCount + "=> " + enchantName + ":" + enchantLevel;
+                    info(sEnch);
+                }
                 
                 /*
                 List<RollingEnchantment> matchingRules = searchingEnchants.stream()
