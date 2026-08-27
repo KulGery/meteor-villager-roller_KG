@@ -738,8 +738,8 @@ public class VillagerRoller extends Module {
             if (cfLogOffer.get()) {
                 // logging the offer with raw text
                 String sTrade=offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
-                sTrade += "; " + (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
-                sTrade += "; " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
+                sTrade += (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : "; " + offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
+                sTrade += " => " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
                 // get Enchantments is too complicated. Will be solved, when I make the rTrades
             }
             //if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
