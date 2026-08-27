@@ -732,14 +732,15 @@ public class VillagerRoller extends Module {
             .findFirst()
             .orElse(null);
         */
+        if (cfLogOffer.get()) info("Trades: ");
         for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
             // log Offer
             if (cfLogOffer.get()) {
                 // logging the offer with raw text
-                String sTrade=offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
+                String sTrade = offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : "; " + offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
-                sTrade += " => " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();                
+                sTrade += " => " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
                 // get Enchantments is too complicated. Will be solved, when I make the rTrades
                 info(sTrade);
             }
