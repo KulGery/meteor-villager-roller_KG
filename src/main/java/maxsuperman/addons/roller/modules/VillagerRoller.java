@@ -287,7 +287,7 @@ public class VillagerRoller extends Module {
         .build()
     );
 
-    private final Setting<Boolean> cfLogOffer = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Boolean> cfLogOffer = sgChatFeedback.add(new BoolSetting.Builder()
         .name("log raw Offer")
         .description("Print full Offer on Chat")
         .defaultValue(false)
@@ -739,8 +739,9 @@ public class VillagerRoller extends Module {
                 // logging the offer with raw text
                 String sTrade=offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : "; " + offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
-                sTrade += " => " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
+                sTrade += " => " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();                
                 // get Enchantments is too complicated. Will be solved, when I make the rTrades
+                info(sTrade);
             }
             //if (!sellItem.isOf(Items.ENCHANTED_BOOK) || sellItem.get(DataComponentTypes.STORED_ENCHANTMENTS) == null)
             if (!sellItem.isOf(Items.ENCHANTED_BOOK) || !sellItem.contains(DataComponentTypes.STORED_ENCHANTMENTS))
