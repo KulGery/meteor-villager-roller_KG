@@ -204,6 +204,13 @@ public class VillagerRoller extends Module {
         .build()
     );
 
+    private final Setting<Boolean> cgTradeWithPaper = sgGeneral.add(new BoolSetting.Builder()
+        .name("need-paper")
+        .description("Trade need paper to fix trades and farm Emeralds.")
+        .defaultValue(true)
+        .build()
+    );
+
     private final Setting<Boolean> cfSetup = sgChatFeedback.add(new BoolSetting.Builder()
         .name("setup")
         .description("Hints on what to do in the beginning (otherwise denoted in modules list state)")
@@ -276,13 +283,6 @@ public class VillagerRoller extends Module {
     private final Setting<Boolean> cfFoundMatching = sgChatFeedback.add(new BoolSetting.Builder()
         .name("found-matching")
         .description("Lets you know what was found before stopping.")
-        .defaultValue(true)
-        .build()
-    );
-
-    private final Setting<Boolean> cfTradeWithPaper = sgChatFeedback.add(new BoolSetting.Builder()
-        .name("need-paper")
-        .description("Trade need paper to fix trades and farm Emeralds.")
         .defaultValue(true)
         .build()
     );
@@ -705,7 +705,7 @@ public class VillagerRoller extends Module {
     }
 
     public void triggerTradeCheck(TradeOfferList l) { // l (el) is the first letter of list. Its a very short and simple variable name.
-        // Check Paper in trades (cfTradeWidthPaper)
+        // Check Paper in trades (cgTradeWidthPaper)
         boolean hasPaper= l.stream()
             .anyMatch(o -> o.getOriginalFirstBuyItem().isOf(Items.PAPER));
         
@@ -777,7 +777,7 @@ public class VillagerRoller extends Module {
                             //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
                             enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
                     }
-                    if (cfTradeWithPaper.get() && !hasPaper) { // lefogláshoz van papír?
+                    if (cgTradeWithPaper.get() && !hasPaper) { // lefogláshoz van papír?
                         // Auch.. Ehhez kell a teljes kiértékelés! a másik vásárra innen nem látunk rá
                         //  Megoldottuk így is.
                         info("Matching trade has no paper to fix and farm emeralds. Stop withdrawn, rolling continues.");
