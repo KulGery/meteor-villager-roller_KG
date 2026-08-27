@@ -735,7 +735,7 @@ public class VillagerRoller extends Module {
         for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
             // log Offer
-            If (cfLogOffer.get()) {
+            if (cfLogOffer.get()) {
                 // logging the offer with raw text
                 String sTrade=offer.getOriginalFirstBuyItem().getCount + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += "; " + (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
@@ -754,7 +754,7 @@ public class VillagerRoller extends Module {
                 var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT); // Lekérjük az enchantok registry kulcsát
                 String enchantIdString = reg.getId(enchant.key().value()).toString();
                 String enchantName = Names.get(enchant.key());
-                If (cfLogOffer.get()) {
+                if (cfLogOffer.get()) {
                     // Log enchants too
                     String sEnch=sellItem.getCount + "=> " + enchantName + ":" + enchantLevel;
                     info(sEnch);
