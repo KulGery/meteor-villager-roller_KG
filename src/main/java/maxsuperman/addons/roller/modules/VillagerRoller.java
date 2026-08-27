@@ -737,7 +737,7 @@ public class VillagerRoller extends Module {
             // log Offer
             if (cfLogOffer.get()) {
                 // logging the offer with raw text
-                String sTrade=offer.getOriginalFirstBuyItem().getCount + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
+                String sTrade=offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += "; " + (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
                 sTrade += "; " + sellItem.getCount() + "x " + sellItem.getItem().getName().getString();
                 // get Enchantments is too complicated. Will be solved, when I make the rTrades
@@ -756,7 +756,7 @@ public class VillagerRoller extends Module {
                 String enchantName = Names.get(enchant.key());
                 if (cfLogOffer.get()) {
                     // Log enchants too
-                    String sEnch=sellItem.getCount + "=> " + enchantName + ":" + enchantLevel;
+                    String sEnch=sellItem.getCount() + "=> " + enchantName + ":" + enchantLevel;
                     info(sEnch);
                 }
                 
