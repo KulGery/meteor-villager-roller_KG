@@ -529,9 +529,9 @@ public class VillagerRoller extends Module {
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
-            minPrice=(2+3*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
-            maxPrice=(2+13*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
-            mxPrice=min(maxPrice,64);
+            int minPrice=(2+3*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            int maxPrice=(2+13*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            int mxPrice=min(maxPrice,64);
             cost.action = () -> {
                 if (cost.get()==1) {
                     e.maxCost=minPrice;
