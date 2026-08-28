@@ -507,7 +507,7 @@ public class VillagerRoller extends Module {
             if (en.isPresent()) {
                 book = EnchantmentHelper.getEnchantedBookWith(new EnchantmentLevelEntry(en.get(), en.get().value().getMaxLevel()));
                 maxlevel = en.get().value().getMaxLevel();
-                isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
+                isDoublePrice=en.get().isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
             }
             table.add(theme.item(book));
 
