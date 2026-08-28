@@ -528,17 +528,18 @@ public class VillagerRoller extends Module {
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
+            int isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
+            //int minPrice=(2+3*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            //int maxPrice=(2+13*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            //int mxPrice=Math.min(maxPrice,64);
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
-            int minPrice=(2+3*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
-            int maxPrice=(2+13*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
-            int mxPrice=Math.min(maxPrice,64);
             cost.action = () -> {
                 if (cost.get()==1) {
-                    e.maxCost=minPrice;
-                } else if (cost.get()<minPrice) {
+                    e.maxCost=getMinPrice(e.minLevel,isDoublePrice);
+                } else if (cost.get()<getMinPrice(e.minLevel,isDoublePrice)) {
                     e.maxCost=0;
-                } else if (cost.get()>mxPrice) {
-                    e.maxCost=maxPrice;
+                } else if (cost.get()>getMxPrice(e.minLevel,isDoublePrice)) {
+                    e.maxCost=getMxPrice(e.minLevel,isDoublePrice);
                 } else {
                     e.maxCost = cost.get();
                 };
@@ -696,9 +697,18 @@ public class VillagerRoller extends Module {
     public static int getMaximumPrice(RegistryEntry<Enchantment> e) {
         if (e == null) return 0;
         //return e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? (2 + 3 * e.value().getMaxLevel()) * 2 : 2 + 3 * e.value().getMaxLevel();
-        return 2+13*e.value().getMaxLevel() * (e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+        return (2+13*e.value().getMaxLevel()) * (e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
     }
-    
+    public static int getMinPrice(int level,int dbl) {
+        return (2+3*level)*dbl;
+    }
+    public static int getMaxPrice(int level,int dbl) {
+        return (2+13*level)*dbl;
+    }
+    public static int getMxPrice(int level,int dbl) {
+        return Math.min(getMaxPrice(level,dbl),64);
+    }
+
     private long waitingForTradesTicks = 0;
 
     public void triggerInteract() {
