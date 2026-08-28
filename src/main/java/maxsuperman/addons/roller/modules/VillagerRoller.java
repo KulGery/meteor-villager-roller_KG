@@ -758,7 +758,7 @@ public class VillagerRoller extends Module {
                 String enchantName = Names.get(enchant.key());
                 if (cfLogOffer.get()) {
                     // Log enchants too
-                    String sEnch=offer.getOriginalFirstBuyItem().getCount() + "=> " + enchantName + ":" + enchantLevel + '/' + enchant.key().value().getMaxLevel();
+                    String sEnch=offer.getOriginalFirstBuyItem().getCount() + "(>" + ((2+3*enchantLevel)*(enchant.key().isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1)) + ")" + "=> " + enchantName + ":" + enchantLevel + '/' + enchant.key().value().getMaxLevel();
                     info(sEnch);
                 }
                 
