@@ -529,14 +529,37 @@ public class VillagerRoller extends Module {
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
-            cost.action = () -> e.maxCost = cost.get();
+            minPrice=(2+3*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            maxPrice=(2+13*e.minLevel)*(e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+            mxPrice=min(maxPrice,64);
+            cost.action = () -> {
+                if (cost.get()==1) {
+                    e.maxCost=minPrice;
+                } else if (cost.get()<minPrice) {
+                    e.maxCost=0;
+                } else if (cost.get()>mxPrice) {
+                    e.maxCost=maxPrice;
+                } else {
+                    e.maxCost = cost.get();
+                };
+            }; // Itt kellene ellenőrizni a mincostot, és a maxcostot aktuális levelhez.
             cost.tooltip = "Maximum cost in emeralds, 0 means no limit";
 
-            WButton setOptimal = costbox.add(theme.button("O")).widget();
-            setOptimal.tooltip = "Set to optimal price (2 + maxLevel*3) (double if treasure) (if known)";
-            setOptimal.action = () -> {
+            // Minimal, nem Optimal
+            //WButton setOptimal = costbox.add(theme.button("O")).widget();
+            WButton setMinimal = costbox.add(theme.button("M")).widget(); // Nem kellene a Levelt is maximumra állítani?
+            setMinimal.tooltip = "Set to minimal price (2 + maxLevel*3) (double if treasure)";
+            setMinimal.action = () -> {
                 list.clear();
                 en.ifPresent(enchantmentReference -> e.maxCost = getMinimumPrice(enchantmentReference));
+                fillWidget(theme, list);
+            };
+
+            WButton setOptimal = costbox.add(theme.button("O")).widget();
+            setOptimal.tooltip = "Set to optimal price (Minimal 25% to Maximal)";
+            setOptimal.action = () -> {
+                list.clear();
+                en.ifPresent(enchantmentReference -> e.maxCost = ((getMinimumPrice(enchantmentReference) *3 + getMaximumPrice(enchantmentReference))/4));
                 fillWidget(theme, list);
             };
 
@@ -670,7 +693,12 @@ public class VillagerRoller extends Module {
         if (e == null) return 0;
         return e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? (2 + 3 * e.value().getMaxLevel()) * 2 : 2 + 3 * e.value().getMaxLevel();
     }
-
+    public static int getMaximumPrice(RegistryEntry<Enchantment> e) {
+        if (e == null) return 0;
+        //return e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? (2 + 3 * e.value().getMaxLevel()) * 2 : 2 + 3 * e.value().getMaxLevel();
+        return 2+13*e.value().getMaxLevel() * (e.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
+    }
+    
     private long waitingForTradesTicks = 0;
 
     public void triggerInteract() {
