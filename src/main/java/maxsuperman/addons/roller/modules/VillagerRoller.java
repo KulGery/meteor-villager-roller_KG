@@ -503,9 +503,11 @@ public class VillagerRoller extends Module {
             final int si = i;
             ItemStack book = Items.ENCHANTED_BOOK.getDefaultStack();
             int maxlevel = 255;
+            int isDoublePrice=1;
             if (en.isPresent()) {
                 book = EnchantmentHelper.getEnchantedBookWith(new EnchantmentLevelEntry(en.get(), en.get().value().getMaxLevel()));
                 maxlevel = en.get().value().getMaxLevel();
+                isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
             }
             table.add(theme.item(book));
 
@@ -528,7 +530,7 @@ public class VillagerRoller extends Module {
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
-            int isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
+            //int isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
             //int minPrice=(2+3*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
             //int maxPrice=(2+13*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
             //int mxPrice=Math.min(maxPrice,64);
