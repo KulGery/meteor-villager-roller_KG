@@ -569,13 +569,14 @@ public class VillagerRoller extends Module {
 
             // Minimal, nem Optimal
             //WButton setOptimal = costbox.add(theme.button("O")).widget();
+            final int maxLevel=maxlevel;
             WButton setMinimal = costbox.add(theme.button("M")).widget(); // Nem kellene a Levelt is maximumra állítani?
             setMinimal.tooltip = "Set to minimal price (2 + maxLevel*3) (double if treasure)";
             setMinimal.action = () -> {
                 list.clear();
                 en.ifPresent(enchantmentReference -> {
                     e.maxCost = getMinimumPrice(enchantmentReference);
-                    e.minLevel=maxlevel;
+                    e.minLevel=maxLevel;
                 });
                 fillWidget(theme, list);
             };
@@ -586,7 +587,7 @@ public class VillagerRoller extends Module {
                 list.clear();
                 en.ifPresent(enchantmentReference -> {
                     e.maxCost = ((getMinimumPrice(enchantmentReference) *3 + getMaximumPrice(enchantmentReference))/4);
-                    e.minLevel=maxlevel;
+                    e.minLevel=maxLevel;
                 });
                 fillWidget(theme, list);
             };
