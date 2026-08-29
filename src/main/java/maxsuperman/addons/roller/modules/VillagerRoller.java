@@ -573,7 +573,10 @@ public class VillagerRoller extends Module {
             setMinimal.tooltip = "Set to minimal price (2 + maxLevel*3) (double if treasure)";
             setMinimal.action = () -> {
                 list.clear();
-                en.ifPresent(enchantmentReference -> e.maxCost = getMinimumPrice(enchantmentReference));
+                en.ifPresent(enchantmentReference -> {
+                    e.maxCost = getMinimumPrice(enchantmentReference);
+                    e.minLevel=e.maxlevel;
+                });
                 fillWidget(theme, list);
             };
 
@@ -581,7 +584,10 @@ public class VillagerRoller extends Module {
             setOptimal.tooltip = "Set to optimal price (Minimal 25% to Maximal)";
             setOptimal.action = () -> {
                 list.clear();
-                en.ifPresent(enchantmentReference -> e.maxCost = ((getMinimumPrice(enchantmentReference) *3 + getMaximumPrice(enchantmentReference))/4));
+                en.ifPresent(enchantmentReference -> {
+                    e.maxCost = ((getMinimumPrice(enchantmentReference) *3 + getMaximumPrice(enchantmentReference))/4);
+                    e.minLevel=e.maxlevel;
+                });
                 fillWidget(theme, list);
             };
 
