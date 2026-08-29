@@ -544,18 +544,18 @@ public class VillagerRoller extends Module {
             final int isDoublePrice=DoublePrice;
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
             cost.action = () -> {
-                if cgLevelCost.get() {
+                if (cgLevelCost.get()) {
                     if (cost.get()==1) { // Ha 1 az értéke, akkor kérdés, hogy 0-t növeltük-e vagy beírtuk az 1-t.
-                        if e.maxCost==0 {
+                        if (e.maxCost==0) {
                             e.maxCost=getMinPrice(e.minLevel,isDoublePrice);
                         }
                         cost.set(e.maxCost);
-                    } else if (cost.get()=getMinPrice(e.minLevel,isDoublePrice)-1) { // Ha MinPrice-1 az értéke, akkor kérdés, hogy MinPricet csökkentettük-e vagy beírtuk.
-                        if e.maxcost==cost.get()+1 {
+                    } else if (cost.get()==(getMinPrice(e.minLevel,isDoublePrice)-1)) { // Ha MinPrice-1 az értéke, akkor kérdés, hogy MinPricet csökkentettük-e vagy beírtuk.
+                        if (e.maxcost==(cost.get()+1)) {
                             e.maxCost=0;
                         }
                         cost.set(e.maxCost);
-                    } else if (cost.get()<getMinPrice(e.minLevel,isDoublePrice)-1) { // Ha kissebb mint MinPrice (és nem 0 és nem MinPrice-1) akkor beírtuk
+                    } else if (cost.get()<(getMinPrice(e.minLevel,isDoublePrice)-1)) { // Ha kissebb mint MinPrice (és nem 0 és nem MinPrice-1) akkor beírtuk
                         e.maxCost=getMinPrice(e.minLevel,isDoublePrice)-1;
                         cost.set(e.maxCost);
                     } else if (cost.get()>getMxPrice(e.minLevel,isDoublePrice)) { // Ha nagyobb mint MxPrice, akkor 
