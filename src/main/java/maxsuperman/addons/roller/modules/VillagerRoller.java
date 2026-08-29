@@ -211,6 +211,13 @@ public class VillagerRoller extends Module {
         .build()
     );
 
+    private final Setting<Boolean> cgLevelCost = sgGeneral.add(new BoolSetting.Builder()
+        .name("level-cost")
+        .description("The price is influenced by the level.")
+        .defaultValue(true)
+        .build()
+    );
+
     private final Setting<Boolean> cfSetup = sgChatFeedback.add(new BoolSetting.Builder()
         .name("setup")
         .description("Hints on what to do in the beginning (otherwise denoted in modules list state)")
@@ -526,7 +533,7 @@ public class VillagerRoller extends Module {
             table.add(label);
 
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
-            lev.action = () -> e.minLevel = lev.get();
+            lev.action = () -> e.minLevel = lev.get(); // Beleírjam a cost változtatását, ha léptetem? köztes érték is változzon?
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
@@ -537,19 +544,27 @@ public class VillagerRoller extends Module {
             final int isDoublePrice=DoublePrice;
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
             cost.action = () -> {
-                if (cost.get()==1) {
-                    e.maxCost=getMinPrice(e.minLevel,isDoublePrice);
-                    cost.set(e.maxCost);
-                } else if (cost.get()<getMinPrice(e.minLevel,isDoublePrice)) {
-                    e.maxCost=0;
-                    cost.set(e.maxCost);
-                } else if (cost.get()>getMxPrice(e.minLevel,isDoublePrice)) {
-                    e.maxCost=getMxPrice(e.minLevel,isDoublePrice);
-                    cost.set(e.maxCost);
-                } else {
-                    e.maxCost = cost.get();
-                };
-            }; // Itt kellene ellenőrizni a mincostot, és a maxcostot aktuális levelhez.
+                if cgLevelCost.get() {
+                    if (cost.get()==1) { // Ha 1 az értéke, akkor kérdés, hogy 0-t növeltük-e vagy beírtuk az 1-t.
+                        if e.maxCost==0 {
+                            e.maxCost=getMinPrice(e.minLevel,isDoublePrice);
+                        }
+                        cost.set(e.maxCost);
+                    } else if (cost.get()=getMinPrice(e.minLevel,isDoublePrice)-1) { // Ha MinPrice-1 az értéke, akkor kérdés, hogy MinPricet csökkentettük-e vagy beírtuk.
+                        if e.maxcost==cost.get()+1 {
+                            e.maxCost=0;
+                        }
+                        cost.set(e.maxCost);
+                    } else if (cost.get()<getMinPrice(e.minLevel,isDoublePrice)-1) { // Ha kissebb mint MinPrice (és nem 0 és nem MinPrice-1) akkor beírtuk
+                        e.maxCost=getMinPrice(e.minLevel,isDoublePrice)-1;
+                        cost.set(e.maxCost);
+                    } else if (cost.get()>getMxPrice(e.minLevel,isDoublePrice)) { // Ha nagyobb mint MxPrice, akkor 
+                        e.maxCost=getMxPrice(e.minLevel,isDoublePrice);
+                        cost.set(e.maxCost);
+                    }
+                }
+                e.maxCost = cost.get();                
+            };
             cost.tooltip = "Maximum cost in emeralds, 0 means no limit";
 
             // Minimal, nem Optimal
