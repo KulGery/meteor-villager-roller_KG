@@ -575,7 +575,7 @@ public class VillagerRoller extends Module {
                 list.clear();
                 en.ifPresent(enchantmentReference -> {
                     e.maxCost = getMinimumPrice(enchantmentReference);
-                    e.minLevel=e.maxlevel;
+                    e.minLevel=maxlevel;
                 });
                 fillWidget(theme, list);
             };
@@ -586,7 +586,7 @@ public class VillagerRoller extends Module {
                 list.clear();
                 en.ifPresent(enchantmentReference -> {
                     e.maxCost = ((getMinimumPrice(enchantmentReference) *3 + getMaximumPrice(enchantmentReference))/4);
-                    e.minLevel=e.maxlevel;
+                    e.minLevel=maxlevel;
                 });
                 fillWidget(theme, list);
             };
