@@ -551,7 +551,7 @@ public class VillagerRoller extends Module {
                         }
                         cost.set(e.maxCost);
                     } else if (cost.get()==(getMinPrice(e.minLevel,isDoublePrice)-1)) { // Ha MinPrice-1 az értéke, akkor kérdés, hogy MinPricet csökkentettük-e vagy beírtuk.
-                        if (e.maxcost==(cost.get()+1)) {
+                        if (e.maxCost==(cost.get()+1)) {
                             e.maxCost=0;
                         }
                         cost.set(e.maxCost);
