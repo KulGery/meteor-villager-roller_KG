@@ -539,10 +539,13 @@ public class VillagerRoller extends Module {
             cost.action = () -> {
                 if (cost.get()==1) {
                     e.maxCost=getMinPrice(e.minLevel,isDoublePrice);
+                    cost.set(e.maxCost);
                 } else if (cost.get()<getMinPrice(e.minLevel,isDoublePrice)) {
                     e.maxCost=0;
+                    cost.set(e.maxCost);
                 } else if (cost.get()>getMxPrice(e.minLevel,isDoublePrice)) {
                     e.maxCost=getMxPrice(e.minLevel,isDoublePrice);
+                    cost.set(e.maxCost);
                 } else {
                     e.maxCost = cost.get();
                 };
