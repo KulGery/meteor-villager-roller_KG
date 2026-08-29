@@ -32,6 +32,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: 'villager-roller-ci.jar'
+          name: 'villager-roller-ci-${{ matrix.os }}.jar'
           path: 'build/libs/*.jar'
           archive: false
