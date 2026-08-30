@@ -755,10 +755,10 @@ public class VillagerRoller extends Module {
     }
 
     public static int changeLevelPrice(int price, int olevel, int nlevel,int dbl) {
-        int nPrice=price/dbl
+        int nPrice=price/dbl;
         nPrice=nPrice-2;
         nPrice=nPrice*nlevel/olevel;
-        nPrice=nPrice+2
+        nPrice=nPrice+2;
         nPrice=nPrice*dbl;
         nPrice=Math.min(nPrice,64);
         return nPrice;
