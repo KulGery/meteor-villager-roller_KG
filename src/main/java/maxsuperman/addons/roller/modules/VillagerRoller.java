@@ -534,9 +534,9 @@ public class VillagerRoller extends Module {
 
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
             lev.action = () -> {
-                if cgLevelCost {e.maxCost=changeLevelPrice(e.maxCost,e.minLevel,lev.get(),isDoublePrice))}
+                if (cgLevelCost) {e.maxCost=changeLevelPrice(e.maxCost,e.minLevel,lev.get(),isDoublePrice));}
                 e.minLevel = lev.get();                
-                if cgLevelCost {cost.set(e.maxCost)}
+                if (cgLevelCost) {cost.set(e.maxCost);}
             }; // Beleírjam a cost változtatását, ha léptetem? köztes érték is változzon?
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
