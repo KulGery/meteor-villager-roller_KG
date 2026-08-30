@@ -760,7 +760,7 @@ public class VillagerRoller extends Module {
         // Ha 0-ról váltunk, akkor határok közé szorítjuk.
         // Ha price 0, akkor szintén békén hagyjuk
         int nPrice=price;
-        if ((nPrice>0) || (nlevel==0)) {
+        if ((nPrice>0) && (nlevel!=0)) {
             if (olevel==0) {
                 if (nPrice<getMinPrice(nlevel,dbl)) nPrice=getMinPrice(nlevel,dbl);
                 if (nPrice>getMxPrice(nlevel,dbl)) nPrice=getMxPrice(nlevel,dbl);
