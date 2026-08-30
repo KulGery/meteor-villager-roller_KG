@@ -537,7 +537,7 @@ public class VillagerRoller extends Module {
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
             lev.action = () -> {
                 boolean vChg=false;             
-                if (cgLevelCost && (e.minLevel<>lev.get())) {
+                if (cgLevelCost && (e.minLevel!=lev.get())) {
                     e.maxCost=changeLevelPrice(e.maxCost,e.minLevel,lev.get(),isDoublePrice);
                     vChg=true;
                 }
