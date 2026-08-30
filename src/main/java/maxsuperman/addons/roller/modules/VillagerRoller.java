@@ -755,13 +755,26 @@ public class VillagerRoller extends Module {
     }
 
     public static int changeLevelPrice(int price, int olevel, int nlevel,int dbl) {
-        int nPrice=price/dbl;
-        nPrice=nPrice-2;
-        nPrice=nPrice*nlevel/olevel;
-        nPrice=nPrice+2;
-        nPrice=nPrice*dbl;
-        nPrice=Math.min(nPrice,64);
-        return nPrice;
+        // kezelni a 0-t is!
+        // Ha 0-ra váltunk, nem módosítunk
+        // Ha 0-ról váltunk, akkor határok közé szorítjuk.
+        // Ha price 0, akkor szintén békén hagyjuk
+        int nPrice=price;
+        if ((nPrice>0) || (nLevel==0)) {
+            if oLevel=0 {
+                if (nPrice<getMinPrice(nlevel,dbl)) nPrice=getMinPrice(nlevel,dbl);
+                if (nPrice>getMxPrice(nlevel,dbl)) nPrice=getMxPrice(nlevel,dbl);
+            } else {
+                nPrice=price/dbl;
+                nPrice=nPrice-2;
+                nPrice=nPrice*nlevel/olevel;
+                nPrice=nPrice+2;
+                nPrice=nPrice*dbl;
+                nPrice=Math.min(nPrice,64);
+            }
+        }
+        return nPrice;        
+        
     }
 
     private long waitingForTradesTicks = 0;
