@@ -761,7 +761,7 @@ public class VillagerRoller extends Module {
         // Ha price 0, akkor szintén békén hagyjuk
         int nPrice=price;
         if ((nPrice>0) || (nLevel==0)) {
-            if oLevel=0 {
+            if (oLevel=0) {
                 if (nPrice<getMinPrice(nlevel,dbl)) nPrice=getMinPrice(nlevel,dbl);
                 if (nPrice>getMxPrice(nlevel,dbl)) nPrice=getMxPrice(nlevel,dbl);
             } else {
