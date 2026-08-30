@@ -533,7 +533,11 @@ public class VillagerRoller extends Module {
             table.add(label);
 
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
-            lev.action = () -> e.minLevel = lev.get(); // Beleírjam a cost változtatását, ha léptetem? köztes érték is változzon?
+            lev.action = () -> {
+                if cgLevelCost {e.maxCost=changeLevelPrice(e.maxCost,e.minLevel,lev.get(),isDoublePrice))}
+                e.minLevel = lev.get();                
+                if cgLevelCost {cost.set(e.maxCost)}
+            }; // Beleírjam a cost változtatását, ha léptetem? köztes érték is változzon?
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
             WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
@@ -735,6 +739,14 @@ public class VillagerRoller extends Module {
     }
     public static int getMxPrice(int level,int dbl) {
         return Math.min(getMaxPrice(level,dbl),64);
+    }
+
+    public static int changeLevelPrice(int price, int olevel, int nlevel,int dbl) {
+        nPrice=price/dbl-2
+        nPrice=price*nlevel/olevel;
+        nPrice=(nPrice+2)*dbl
+        nPrice=Math.min(nPrice,64);
+        return nPrice;
     }
 
     private long waitingForTradesTicks = 0;
