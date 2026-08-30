@@ -535,6 +535,7 @@ public class VillagerRoller extends Module {
             final int isDoublePrice=DoublePrice;
 
             WIntEdit lev = table.add(theme.intEdit(e.minLevel, 0, maxlevel, true)).minWidth(40).expandX().widget();
+            WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
             WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
             lev.action = () -> {
                 //boolean vChg=false;             
@@ -552,12 +553,12 @@ public class VillagerRoller extends Module {
             }; // Beleírjam a cost változtatását, ha léptetem? köztes érték is változzon?
             lev.tooltip = "Minimum enchantment level, 0 acts as maximum possible only (for custom 0 acts like 1)";
 
-            WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
+            // KulGery 260830_1118 SetLevel
+            //WHorizontalList costbox = table.add(theme.horizontalList()).minWidth(50).expandX().widget();
             //int isDoublePrice=en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1;
             //int minPrice=(2+3*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
             //int maxPrice=(2+13*e.minLevel)*(en.isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1);
             //int mxPrice=Math.min(maxPrice,64);
-            // KulGery 260830_1118 SetLevel
             //WIntEdit cost = costbox.add(theme.intEdit(e.maxCost, 0, 64, false)).minWidth(40).expandX().widget();
             cost.action = () -> {
                 if (cgLevelCost.get()  && (e.minLevel>0)) {
