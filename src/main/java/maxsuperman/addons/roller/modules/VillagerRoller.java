@@ -943,9 +943,9 @@ public class VillagerRoller extends Module {
                         continue;
                     }
                     */
-                    if (cgTradeWithPaper.get() {
+                    if (cgTradeWithPaper.get()) {
                         if (hasPaper) {
-                            if cfLogOffer.get().ENCHANT {info("Librarian trade Paper to fix and farm!")}
+                            if (cfLogOffer.get().ENCHANT) {info("Librarian trade Paper to fix and farm!");}
                         } else { // lefogláshoz van papír?
                             // Auch.. Ehhez kell a teljes kiértékelés! a másik vásárra innen nem látunk rá
                             //  Megoldottuk így is.
