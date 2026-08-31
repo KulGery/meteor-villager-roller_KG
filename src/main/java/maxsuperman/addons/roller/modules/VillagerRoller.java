@@ -294,12 +294,43 @@ public class VillagerRoller extends Module {
         .build()
     );
 
+    public enum TradeMode {
+        NONE("None", false, false),
+        JUST_TRADE("Just Trade", true, false),
+        JUST_ENCHANT("Just Enchant", false, true),
+        BOTH("Both", true, true);
+
+        private final String title;
+
+        // Belső nyilvános (public final) mezők:
+        public final boolean TRADE;
+        public final boolean ENCHANT;
+        public final boolean BOTH;
+
+        TradeMode(String title, boolean trade, boolean enchant) {
+            this.title = title;
+            this.TRADE = trade;
+            this.ENCHANT = enchant;
+            this.BOTH = trade && enchant; // Származtatott érték kiszámítása konstruktorban
+        }
+        @Override
+        public String toString() { return title; }
+    }
+
+    private final Setting<TradeMode> cfLogOffer = sgChatFeedback.add(new EnumSetting.Builder<TradeMode>()
+        .name("log raw Offer")
+        .description("Print trade/enchant/full Offer on Chat")
+        .defaultValue(TradeMode.None)
+        .build()
+    );
+    /*
     private final Setting<Boolean> cfLogOffer = sgChatFeedback.add(new BoolSetting.Builder()
         .name("log raw Offer")
         .description("Print full Offer on Chat")
         .defaultValue(false)
         .build()
     );
+    */
 
     private enum State {
         DISABLED,
@@ -838,11 +869,12 @@ public class VillagerRoller extends Module {
             .findFirst()
             .orElse(null);
         */
-        if (cfLogOffer.get()) info("Trades: ");
+        //if (cfLogOffer.get()) info("Trades: ");
+        if (cfLogOffer.get().TRADE) info("Trades: ");
         for (TradeOffer offer : l) {  // but offer is a middle length variable name. Why not o? or why not list the l? or lOffer or offers...
             ItemStack sellItem = offer.getSellItem();
             // log Offer
-            if (cfLogOffer.get()) {
+            if (cfLogOffer.get().TRADE) {
                 // logging the offer with raw text
                 String sTrade = offer.getOriginalFirstBuyItem().getCount() + "x " + offer.getOriginalFirstBuyItem().getItem().getName().getString();
                 sTrade += (offer.getDisplayedSecondBuyItem().isEmpty() ? "" : "; " + offer.getDisplayedSecondBuyItem().getCount() + "x " + offer.getDisplayedSecondBuyItem().getItem().getName().getString());
@@ -862,7 +894,7 @@ public class VillagerRoller extends Module {
                 var reg = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT); // Lekérjük az enchantok registry kulcsát
                 String enchantIdString = reg.getId(enchant.key().value()).toString();
                 String enchantName = Names.get(enchant.key());
-                if (cfLogOffer.get()) {
+                if (cfLogOffer.get().ENCHANT) {
                     // Log enchants too
                     String sEnch=offer.getOriginalFirstBuyItem().getCount() + " (>" + ((2+3*enchantLevel)*(enchant.key().isIn(EnchantmentTags.DOUBLE_TRADE_PRICE) ? 2:1)) + ")" + "=> " + enchantName + ":" + enchantLevel + '/' + enchant.key().value().getMaxLevel();
                     info(sEnch);
