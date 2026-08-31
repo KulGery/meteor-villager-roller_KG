@@ -304,14 +304,12 @@ public class VillagerRoller extends Module {
 
         // Belső nyilvános (public final) mezők:
         public final boolean TRADE;
-        public final boolean ENCHANT;
-        public final boolean BOTH;
+        public final boolean ENCHANT;        
 
         TradeMode(String title, boolean trade, boolean enchant) {
             this.title = title;
             this.TRADE = trade;
-            this.ENCHANT = enchant;
-            this.BOTH = trade && enchant; // Származtatott érték kiszámítása konstruktorban
+            this.ENCHANT = enchant;            
         }
         @Override
         public String toString() { return title; }
@@ -937,11 +935,23 @@ public class VillagerRoller extends Module {
                             //enchantName, enchantLevel, offer.getBaseCostA().getCount()));
                             enchantName, enchantLevel, offer.getOriginalFirstBuyItem().getCount()));
                     }
+                    /*
                     if (cgTradeWithPaper.get() && !hasPaper) { // lefogláshoz van papír?
                         // Auch.. Ehhez kell a teljes kiértékelés! a másik vásárra innen nem látunk rá
                         //  Megoldottuk így is.
                         info("Matching trade has no paper to fix and farm emeralds. Stop withdrawn, rolling continues.");
                         continue;
+                    }
+                    */
+                    if (cgTradeWithPaper.get() {
+                        if (hasPaper) {
+                            if cfLogOffer.get().ENCHANT {info("Librarian trade Paper to fix and farm!")}
+                        } else { // lefogláshoz van papír?
+                            // Auch.. Ehhez kell a teljes kiértékelés! a másik vásárra innen nem látunk rá
+                            //  Megoldottuk így is.
+                            info("Matching trade has no paper to fix and farm emeralds. Stop withdrawn, rolling continues.");
+                            continue;
+                        }
                     }
                     if (disableIfFound.get()) e.enabled = false; // disabláljuk
                     toggle();
