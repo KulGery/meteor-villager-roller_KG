@@ -318,7 +318,7 @@ public class VillagerRoller extends Module {
     private final Setting<TradeMode> cfLogOffer = sgChatFeedback.add(new EnumSetting.Builder<TradeMode>()
         .name("log raw Offer")
         .description("Print trade/enchant/full Offer on Chat")
-        .defaultValue(TradeMode.None)
+        .defaultValue(TradeMode.NONE)
         .build()
     );
     /*
